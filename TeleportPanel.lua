@@ -1,6 +1,6 @@
 -- ایجاد یک صفحه GUI
 local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game:GetService("CoreGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- ایجاد یک فریم برای پنل
 local frame = Instance.new("Frame")
@@ -72,8 +72,14 @@ local function teleportPlayer()
         local localCharacter = game.Players.LocalPlayer.Character
 
         if character and localCharacter then
-            -- تنظیم موقعیت بازیکن انتخاب‌شده به بالای سر بازیکن محلی
-            character:MoveTo(localCharacter.HumanoidRootPart.Position + Vector3.new(0, 5, 0))
+            -- غیرفعال کردن فیزیک موقتاً
+            character.HumanoidRootPart.Anchored = true
+            -- تغییر موقعیت بازیکن انتخاب‌شده به بالای سر بازیکن محلی
+            character:SetPrimaryPartCFrame(localCharacter.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))
+            character.HumanoidRootPart.Velocity = Vector3.zero -- سرعت را صفر کنید
+            character.HumanoidRootPart.RotVelocity = Vector3.zero -- سرعت چرخش را صفر کنید
+            wait(1) -- منتظر بمانید تا بازیکن در موقعیت جدید ثابت شود
+            character.HumanoidRootPart.Anchored = false -- فعال کردن مجدد فیزیک
         else
             warn("کاراکتر پیدا نشد!")
         end
