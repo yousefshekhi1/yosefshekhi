@@ -34,6 +34,9 @@ teleportButton.Position = UDim2.new(0.5, -50, 1, -50)
 teleportButton.Text = "تلپورت"
 teleportButton.Parent = frame
 
+-- متغیر برای ذخیره بازیکن انتخاب‌شده
+local selectedPlayer = nil
+
 -- تابع برای پر کردن لیست بازیکنان
 local function updatePlayerList()
     for _, child in pairs(scrollFrame:GetChildren()) do
@@ -53,7 +56,7 @@ local function updatePlayerList()
 
         playerButton.MouseButton1Click:Connect(function()
             teleportButton.Text = "تلپورت به " .. player.Name
-            teleportButton.PlayerToTeleport = player
+            selectedPlayer = player -- ذخیره بازیکن انتخاب‌شده
         end)
 
         yOffset = yOffset + 35
@@ -64,9 +67,8 @@ end
 
 -- تابع برای تلپورت بازیکن به بالای سر بازیکن محلی
 local function teleportPlayer()
-    local player = teleportButton.PlayerToTeleport
-    if player then
-        local character = player.Character
+    if selectedPlayer then
+        local character = selectedPlayer.Character
         local localCharacter = game.Players.LocalPlayer.Character
 
         if character and localCharacter then
