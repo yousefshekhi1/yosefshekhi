@@ -65,35 +65,21 @@ local function updatePlayerList()
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
 end
 
--- تابع برای تلپورت بازیکن به بالای سر بازیکن محلی
-local function teleportPlayer()
-    if selectedPlayer then
-        local character = selectedPlayer.Character
-        local localCharacter = game.Players.LocalPlayer.Character
-
-        if character and localCharacter then
-            -- غیرفعال کردن فیزیک موقتاً
-            character.HumanoidRootPart.Anchored = true
-            -- تغییر موقعیت بازیکن انتخاب‌شده به بالای سر بازیکن محلی
-            character:SetPrimaryPartCFrame(localCharacter.HumanoidRootPart.CFrame + Vector3.new(0, 5, 0))
-            character.HumanoidRootPart.Velocity = Vector3.zero -- سرعت را صفر کنید
-            character.HumanoidRootPart.RotVelocity = Vector3.zero -- سرعت چرخش را صفر کنید
-            wait(1) -- منتظر بمانید تا بازیکن در موقعیت جدید ثابت شود
-            character.HumanoidRootPart.Anchored = false -- فعال کردن مجدد فیزیک
-        else
-            warn("کاراکتر پیدا نشد!")
-        end
-    else
-        warn("بازیکن انتخاب نشده است!")
-    end
-end
-
 -- اتصال توابع به دکمه‌ها
 closeButton.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
 
-teleportButton.MouseButton1Click:Connect(teleportPlayer)
+teleportButton.MouseButton1Click:Connect(function()
+    if selectedPlayer then
+        -- ارسال درخواست تلپورت به سرور
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local teleportEvent = ReplicatedStorage:WaitForChild("TeleportPlayerEvent")
+        teleportEvent:FireServer(selectedPlayer)
+    else
+        warn("بازیکن انتخاب نشده است!")
+    end
+end)
 
 -- به‌روزرسانی لیست بازیکنان
 updatePlayerList()
